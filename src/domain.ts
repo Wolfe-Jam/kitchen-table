@@ -78,6 +78,8 @@ export interface State {
   counters: { need: number; proposal: number; inbox: number };
   last_speaker: string | null;
   highlight: string | null;
+  /** Verified deeds: one per need, only for someone else's need. Awarded by the server, never claimed. */
+  deeds?: { need_id: string; by: string; owner: string; at_ms: number; text: string }[];
 }
 
 export interface ToolResult {
@@ -167,6 +169,7 @@ export function seed(realNow: number, nowOverride: string | null): State {
     counters: { need: 0, proposal: 0, inbox: 0 },
     last_speaker: null,
     highlight: null,
+    deeds: [],
   };
 }
 
@@ -225,6 +228,27 @@ const byDue = (a: Need, b: Need) => {
   return a.due_ms - b.due_ms || a.created_ms - b.created_ms;
 };
 
+// ---------- Deed of the week ----------
+// Awarded by the server from confirmed actions. No tool lets anyone give or claim it, and there are no votes.
+// Rules: only deeds for someone else's need count; one credit per need; the last 7 days count;
+// most deeds wins; a tie goes to whoever reached that count first; at least one deed is needed.
+const WEEK_MS = 7 * 24 * 3600_000;
+
+function deedOfTheWeek(s: State, now: number) {
+  const recent = (s.deeds ?? []).filter((d) => d.at_ms > now - WEEK_MS && d.at_ms <= now + 3600_000).sort((a, b) => a.at_ms - b.at_ms);
+  if (!recent.length) return null;
+  const tally = new Map<string, { count: number; reached_ms: number; text: string }>();
+  for (const d of recent) {
+    const t = tally.get(d.by) ?? { count: 0, reached_ms: 0, text: "" };
+    t.count += 1;
+    t.reached_ms = d.at_ms;
+    t.text = d.text;
+    tally.set(d.by, t);
+  }
+  const [by, best] = [...tally.entries()].sort((a, b) => b[1].count - a[1].count || a[1].reached_ms - b[1].reached_ms)[0];
+  return { member_id: by, name: nameOf(s, by), count: best.count, text: best.text };
+}
+
 // ---------- board (what the card renders) ----------
 
 export function board(s: State, realNow: number, highlight: string | null = s.highlight) {
@@ -274,6 +298,7 @@ export function board(s: State, realNow: number, highlight: string | null = s.hi
     needs,
     errands,
     strip,
+    deed: deedOfTheWeek(s, now),
     highlight_need_id: highlight,
   };
 }
@@ -462,6 +487,11 @@ function confirm(s: State, a: Record<string, unknown>, now: number, realNow: num
     : `${need.item} for ${nameOf(s, need.owner)}`;
   const text = `${nameOf(s, proposer)} added ${detail} to ${errandDay(errand)} ${errand.speech}.`;
   s.history.push({ at_ms: now, text });
+  // Deed of the week: server-awarded, only for helping someone else, one credit per need.
+  s.deeds = s.deeds ?? [];
+  if (proposer !== need.owner && !s.deeds.some((d) => d.need_id === need.id)) {
+    s.deeds.push({ need_id: need.id, by: proposer, owner: need.owner, at_ms: now, text: `got ${nameOf(s, need.owner)}'s ${need.item} on the run` });
+  }
   const notify: Notification[] = recipients.map((r) => {
     s.inbox.push({ id: `msg_${++s.counters.inbox}`, to: r.id, text, at_ms: now });
     return { to_id: r.id, to_name: r.name, text };

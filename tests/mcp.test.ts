@@ -33,6 +33,8 @@ async function reset(now?: string | null) {
   expect(res.status).toBe(200);
 }
 
+const before0Deed = (state: any) => state.board.deed;
+
 beforeEach(async () => {
   await reset();
 });
@@ -154,15 +156,11 @@ describe("tools", () => {
     expect(p.structuredContent.requires_confirmation).toBe(true);
     expect(p.content[0].text).toBe("Add poster board for Maya to Saturday's 11:30 errand run after soccer, and let Priya know?");
 
+    expect(before0Deed(await (await fetch(`${BASE}/demo/state`)).json())).toBeNull();
     // nothing written yet
     const before = await (await fetch(`${BASE}/demo/state`)).json() as any;
     expect(before.board.needs.find((n: any) => n.need_id === "need_posterboard").status).toBe("open");
     expect(before.inbox).toEqual([]);
-
-    // same-turn confirm is refused
-    const early = await call("confirm_proposal", { proposal_id: p.structuredContent.proposal_id, confirmed: true });
-    expect(early.isError).toBe(true);
-    expect(early.content[0].text).toBe("Let me check with you first.");
 
     await sleep(1100);
     const c = await call("confirm_proposal", { proposal_id: p.structuredContent.proposal_id, confirmed: true });
@@ -172,16 +170,34 @@ describe("tools", () => {
     const sat = c.structuredContent.board.errands.find((e: any) => e.errand_id === "errand_sat_after_soccer");
     expect(sat.items).toContainEqual({ label: "poster board", need_id: "need_posterboard", from: "Maya" });
 
+    expect(c.structuredContent.board.deed).toEqual({ member_id: "member_sam", name: "Sam", count: 1, text: "got Maya's poster board on the run" });
+
     // Priya's inbox
     const after = await (await fetch(`${BASE}/demo/state`)).json() as any;
     expect(after.inbox[0].to_name).toBe("Priya");
     expect(after.inbox[0].text).toBe("Sam added poster board for Maya (Sunday's science fair) to Saturday's 11:30 errand run after soccer.");
 
-    // idempotent
+    // idempotent: a repeat confirm does not add a second credit
     const twice = await call("confirm_proposal", { proposal_id: p.structuredContent.proposal_id, confirmed: true });
     expect(twice.isError).toBeFalsy();
     const final = await (await fetch(`${BASE}/demo/state`)).json() as any;
     expect(final.inbox.length).toBe(1);
+    expect(final.board.deed.count).toBe(1);
+  });
+
+  it("a confirm in the same turn as its question is refused", async () => {
+    // Timing-based by design, so try a few fresh needs: on a slow machine one round trip can pass 1 s.
+    let refused = false;
+    for (let i = 0; i < 4 && !refused; i++) {
+      const n = await call("add_need", { speaker: "Maya", item: `guard probe ${i}`, due: "Sunday" });
+      const p = await call("propose_add_to_errand", { need_id: n.structuredContent.need_id, errand_id: "errand_sat_after_soccer", speaker: "Sam" });
+      const early = await call("confirm_proposal", { proposal_id: p.structuredContent.proposal_id, confirmed: true });
+      if (early.isError) {
+        expect(early.content[0].text).toBe("Let me check with you first.");
+        refused = true;
+      }
+    }
+    expect(refused).toBe(true);
   });
 
   it("confirm with confirmed=false cancels and writes nothing", async () => {
@@ -193,6 +209,19 @@ describe("tools", () => {
     const state = await (await fetch(`${BASE}/demo/state`)).json() as any;
     expect(state.board.needs.find((n: any) => n.need_id === "need_posterboard").status).toBe("open");
     expect(state.inbox).toEqual([]);
+  });
+
+  it("deed of the week: no self-award, nothing to claim, and it is only ever computed by the server", async () => {
+    // Maya schedules her own poster board: that is not a deed for anyone.
+    const p = await call("propose_add_to_errand", { need_id: "need_posterboard", errand_id: "errand_sat_after_soccer", speaker: "Maya" });
+    await call("whats_new_for_me", { speaker: "Priya" }); // does not touch this proposal
+    await sleep(1100);
+    const c = await call("confirm_proposal", { proposal_id: p.structuredContent.proposal_id, confirmed: true });
+    expect(c.isError).toBeFalsy();
+    expect(c.structuredContent.board.deed).toBeNull();
+    // there is no tool that awards or claims a deed
+    const { body } = await rpc("tools/list");
+    expect(body.result.tools.map((t: any) => t.name).join(" ")).not.toMatch(/deed|award|claim|vote/);
   });
 
   it("unknown proposal is a speakable error", async () => {

@@ -33,6 +33,8 @@ h1 small{font-weight:400;color:var(--dim);font-size:14px}
 .run .row{font-size:20px;padding:6px}
 .fresh{animation:pop 2.4s ease-out}
 @keyframes pop{0%{background:#00d4d455;transform:scale(1.03)}100%{background:transparent;transform:none}}
+.deed{background:#2a2410;border:1px solid #6b5a14;color:#ffd866;border-radius:12px;padding:8px 14px;font-size:18px}
+.deed b{color:#fff}
 .inbox{background:#10151c;border:1px dashed var(--line);border-radius:14px;padding:10px 16px;font-size:16px}
 .inbox h2{margin:0 0 6px;font-size:13px;color:var(--dim);text-transform:uppercase;letter-spacing:.08em}
 .muted{color:var(--dim)}
@@ -49,6 +51,7 @@ h1 small{font-weight:400;color:var(--dim);font-size:14px}
     if(!b)return;
     var h='<h1>Kitchen Table <small>'+esc(b.as_of_iso?new Date(b.as_of_iso).toLocaleString('en-US',{timeZone:'America/New_York',weekday:'long',hour:'numeric',minute:'2-digit'}):'')+'</small></h1>';
     h+='<div class="strip">'+(b.strip||[]).map(function(s){return '<div><b>'+esc(s.day)+' '+esc(s.time)+'</b>'+esc(s.label)+'</div>';}).join('')+'</div>';
+    if(b.deed)h+='<div class="deed">\u2605 Deed of the week \u00b7 <b>'+esc(b.deed.name)+'</b> \u2014 '+esc(b.deed.text)+(b.deed.count>1?' ('+b.deed.count+' deeds)':'')+'</div>';
     h+='<div class="cols"><div class="col"><h2>Needs</h2>';
     var needs=b.needs||[];
     if(!needs.length)h+='<div class="muted">Nothing needed right now.</div>';

@@ -17,6 +17,15 @@ Built for the Alexa+ track of the Amazon Developer Hackathon "Build, Ship, Shape
 
 No purchases are made.
 
+### Deed of the week (the opposite of a timeout)
+The board names the household member who did the most for someone else this week: "★ Deed of the week · **Sam** — got Maya's poster board on the run". It is awarded by the server, never claimed or voted on:
+- No tool gives or claims a deed (a test checks the tool list).
+- Only helping someone else's need counts, so scheduling your own earns nothing.
+- One credit per need, so the same need cannot be farmed, and a repeat confirm adds nothing.
+- The last 7 days count; most deeds wins; a tie goes to whoever reached the count first.
+
+Limit: `speaker` is simulated in this build, so someone could pass another person's name. With real Alexa voice identification the same rules would hold per person.
+
 ## Architecture
 ```
 Echo / Alexa simulator ─▶ Alexa skill (alexa-skill-mcp-bridge) ─▶ Strands agent (AgentCore, Nova 2 Lite)
