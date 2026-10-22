@@ -1,0 +1,49 @@
+{
+  "manifestVersion": "1.0",
+  "storeListing": {
+    "distributionCountries": ["US"]
+  },
+  "name": {
+    "value": "Kitchen Table"
+  },
+  "shortDescription": "One helper for the whole household. It remembers what each person needs and follows up.",
+  "fullDescription": "Kitchen Table remembers what each person in your household needs, across days and across people. Ask what's new and it tells you what others are waiting on, suggests where it fits in your plans, and asks before changing anything. When you say yes, it updates the errand list and lets the other parent know. Demo build: no purchases are made.",
+  "examplePhrases": [
+    "Alexa, tell Kitchen Table I need poster board for the science fair on Sunday",
+    "Alexa, ask Kitchen Table if there's anything I should know",
+    "Alexa, ask Kitchen Table what's on the Saturday errand run",
+    "Alexa, tell Kitchen Table I got the poster board"
+  ],
+  "privacyAndCompliance": {
+    "privacyPolicyUrl": "https://kitchen-table-mcp.wolfejam2020.workers.dev/privacy",
+    "termsOfUseUrl": "https://kitchen-table-mcp.wolfejam2020.workers.dev/terms"
+  },
+  "mediaAssets": {
+    "icons": {
+      "light": {
+        "72x72": "https://REPLACE-WITH-HOST/icons/light-72.png",
+        "64x64": "https://REPLACE-WITH-HOST/icons/light-64.png",
+        "88x88": "https://REPLACE-WITH-HOST/icons/light-88.png",
+        "126x126": "https://REPLACE-WITH-HOST/icons/light-126.png",
+        "180x180": "https://REPLACE-WITH-HOST/icons/light-180.png",
+        "241x241": "https://REPLACE-WITH-HOST/icons/light-241.png"
+      }
+    },
+    "carouselImages": [
+      { "uri": "https://REPLACE-WITH-HOST/carousel/board-600x900.png", "altText": "The Kitchen Table board showing needs and Saturday's errand run." }
+    ]
+  },
+  "integrations": [
+    {
+      "type": "MCP",
+      "config": {
+        "endpoints": {
+          "default": {
+            "type": "HTTPS",
+            "uri": "https://kitchen-table-mcp.wolfejam2020.workers.dev/mcp"
+          }
+        }
+      }
+    }
+  ]
+}

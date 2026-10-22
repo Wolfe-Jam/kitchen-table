@@ -1,0 +1,68 @@
+#!/usr/bin/env bash
+# Demo helper: call the Kitchen Table MCP server and print what Alexa would say.
+#   scripts/kt whats_new_for_me '{"speaker":"Sam"}'
+#   scripts/kt yes            # propose the last suggestion, wait a turn, then confirm
+#   scripts/kt tools | log | reset
+# Env: MCP_TOKEN (required for tools), ADMIN_SECRET (reset), KT_URL (default: the deployed Worker).
+set -euo pipefail
+URL="${KT_URL:-https://kitchen-table-mcp.wolfejam2020.workers.dev}"
+LAST="${TMPDIR:-/tmp}/kt-last.json"
+
+rpc() { # method params-json
+  curl -s -X POST "$URL/mcp" -H "authorization: Bearer ${MCP_TOKEN:?set MCP_TOKEN}" \
+    -H 'content-type: application/json' \
+    -d "{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"$1\",\"params\":$2}"
+}
+
+show() { # prints speech + latency
+  python3 -c '
+import sys, json
+r = json.load(sys.stdin)
+if "error" in r:
+    print("ERROR:", r["error"]["message"]); sys.exit(1)
+res = r["result"]
+print(("[error] " if res.get("isError") else "Alexa: ") + res["content"][0]["text"])
+m = res.get("_meta", {})
+sc = res.get("structuredContent", {})
+bits = []
+if "duration_ms" in m: bits.append("%s ms" % m["duration_ms"])
+if "turn_gap_ms" in sc: bits.append("turn gap %s ms" % sc["turn_gap_ms"])
+if bits: print("        (" + ", ".join(bits) + ")")
+'
+}
+
+call() { rpc tools/call "{\"name\":\"$1\",\"arguments\":$2}"; }
+
+case "${1:-}" in
+  tools)
+    rpc tools/list '{}' | python3 -c 'import sys,json;[print(" -", t["name"]) for t in json.load(sys.stdin)["result"]["tools"]]'
+    ;;
+  log)
+    curl -s "$URL/demo/log" | python3 -c '
+import sys, json
+for e in json.load(sys.stdin)["log"][-8:]:
+    gap = "  turn_gap_ms=%s" % e["turn_gap_ms"] if e.get("turn_gap_ms") else ""
+    print("%-24s %4s ms  error=%s%s" % (e["tool"], e["duration_ms"], str(e["is_error"]).lower(), gap))'
+    ;;
+  reset)
+    curl -s -X POST "$URL/admin/reset" -H "x-admin-secret: ${ADMIN_SECRET:?set ADMIN_SECRET}"; echo
+    ;;
+  yes)
+    [ -f "$LAST" ] || { echo "Nothing to confirm. Ask whats_new_for_me first."; exit 1; }
+    NEED=$(python3 -c "import json;print(json.load(open('$LAST'))['items'][0]['need_id'])")
+    ERR=$(python3 -c "import json;print(json.load(open('$LAST'))['items'][0]['suggested_errand_id'])")
+    PROP=$(call propose_add_to_errand "{\"need_id\":\"$NEED\",\"errand_id\":\"$ERR\"}")
+    echo "$PROP" | show
+    PID=$(echo "$PROP" | python3 -c 'import sys,json;print(json.load(sys.stdin)["result"]["structuredContent"]["proposal_id"])')
+    sleep 1.5
+    call confirm_proposal "{\"proposal_id\":\"$PID\",\"confirmed\":true}" | show
+    ;;
+  "")
+    echo "usage: kt <tool> '<json-args>' | tools | log | yes | reset"; exit 1
+    ;;
+  *)
+    OUT=$(call "$1" "${2:-{\}}")
+    echo "$OUT" | show
+    echo "$OUT" | python3 -c 'import sys,json;sc=json.load(sys.stdin).get("result",{}).get("structuredContent",{});json.dump(sc,open("'"$LAST"'","w")) if "items" in sc else None'
+    ;;
+esac

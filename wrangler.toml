@@ -1,0 +1,15 @@
+name = "kitchen-table-mcp"
+main = "src/index.ts"
+compatibility_date = "2025-10-01"
+
+[[durable_objects.bindings]]
+name = "HOUSEHOLD"
+class_name = "Household"
+
+# SQLite-backed Durable Object class (available on the free plan)
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["Household"]
+
+# Secrets (never committed): wrangler secret put MCP_TOKEN / ADMIN_SECRET
+# Optional: NOTIFY_WEBHOOK_URL (plain var or secret) to also POST nudges to a webhook.

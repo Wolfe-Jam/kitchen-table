@@ -1,0 +1,49 @@
+faf_version: "3.0"
+project:
+  name: kitchen-table-mcp
+  goal: "Kitchen Table: one Alexa+ helper for the whole household (MCP server on Cloudflare Workers)"
+  main_language: TypeScript
+  type: mcp-server
+stack:
+  frontend: slotignored
+  css_framework: slotignored
+  ui_library: slotignored
+  state_management: slotignored
+  backend: Cloudflare Workers (hand-rolled MCP JSON-RPC)
+  api_type: MCP Streamable HTTP (spec 2025-11-25)
+  runtime: Cloudflare Workers (workerd)
+  database: Durable Objects (SQLite-backed, one per household)
+  connection: slotignored
+  hosting: Cloudflare
+  build: TypeScript (tsc)
+  cicd: slotignored
+  monorepo_tool: slotignored
+  package_manager: npm
+  workspaces: slotignored
+  admin: slotignored
+  cache: slotignored
+  search: slotignored
+  storage: slotignored
+human_context:
+  who: "Households using Alexa+: kids, parents. Built for the Amazon Developer Hackathon (Alexa+ track) by James Wolfe."
+  what: "Kitchen Table: one Alexa+ helper for the whole household (MCP server on Cloudflare Workers)"
+  why: "Families need Alexa to remember what each person needs across days and people, follow up, and confirm before acting."
+  where: "Cloudflare Workers (workers.dev); reached by Alexa+ through the alexa-skill-mcp-bridge or the Alexa+ MCP toolkit."
+  when: "Hackathon deadline Fri 2026-10-23 12:00 PM PT. Demo clock pinned to Fri 2026-10-23 6:30 PM ET."
+  how: npm run dev
+monorepo:
+  packages_count: slotignored
+  build_orchestrator: slotignored
+  versioning_strategy: slotignored
+  shared_configs: slotignored
+  remote_cache: slotignored
+tech_stack:
+  - TypeScript
+key_files:
+  - package.json
+  - src/index.ts
+  - tsconfig.json
+  - wrangler.toml
+commands:
+  test: npm test  # starts wrangler dev, calls live /mcp
+  dev: npm run dev

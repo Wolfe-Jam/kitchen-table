@@ -1,0 +1,8 @@
+node_modules/
+.wrangler/
+.wrangler-test/
+.dev.vars
+.env
+dist/
+*.log
+.prod-secrets
