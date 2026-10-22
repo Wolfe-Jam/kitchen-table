@@ -54,6 +54,8 @@ Every result has `structuredContent` plus a speakable `content[].text`. Errors a
 
 `confirm_proposal` refuses to act within 1 s of the question it answers ("Let me check with you first."), so an agent can't ask and confirm in one turn. `turn_gap_ms` is logged.
 
+**For judges:** see [TESTING.md](TESTING.md) for a 1-minute, a 5-minute and a test-suite way to check it.
+
 ## Run locally
 ```bash
 npm install
