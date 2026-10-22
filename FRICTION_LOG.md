@@ -116,6 +116,18 @@ Template: [chris-trag/friction-log-guide](https://github.com/chris-trag/friction
 
 **Recommendation:** None for Amazon; recorded for completeness.
 
+### Kiro CLI sign-in fails with "Token exchange failed" on a new AWS account
+
+**Severity:** 🔥 Critical
+
+**Timestamp:** 2026-10-22 ~02:30 local, Kiro CLI 2.33.1 desktop sign-in
+
+**Expected:** Sign in with Google, GitHub or Builder ID and start using the CLI.
+
+**Actual:** Every option ends in: `Unified auth portal failed: Authentication failed: The identity provider reported an error: Token exchange failed: {"message":"There was an error signing in. Please contact Support ... Reference: b4e854b8-f001-70bc-b65c-e46b1e85bec8"}`. `kiro-cli whoami` reports "Not logged in". The same account was, at that moment, waiting on AWS identity verification (driving licence and proof of address), so the cause may be that, but the error does not say so. Reproduced from a second client: `kiro-cli login` in a terminal fails with the same message and the **same reference ID**, so the failure follows the sign-in identity, not the app or the machine. `kiro-cli login --use-device-flow` is interactive and prints nothing without a terminal, so a coding agent cannot start the device flow.
+
+**Recommendation:** Name the actual cause in the error (for example "account verification pending"), and make `kiro-cli login --use-device-flow` print the code and URL in non-interactive shells.
+
 ## Questions
 
 - Open Source mini challenge: the rules say "new, additional" project or a contribution alongside the primary entry. Does the main repo count, or does it need a separate repo or PR?
@@ -157,7 +169,8 @@ Template: [chris-trag/friction-log-guide](https://github.com/chris-trag/friction
 
 ## What failed
 
-- ❌ Not yet attempted: bridge + AgentCore + Nova, Alexa simulator run, real Echo, Kiro
+- ❌ Kiro: installed, but sign-in fails (see Friction), so nothing was built with it
+- ❌ Not attempted: bridge + AgentCore + Nova (AWS account verification pending), Alexa simulator run, real Echo
 
 ## Appendix
 
