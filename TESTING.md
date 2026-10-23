@@ -50,7 +50,7 @@ To call the tools another way, point the MCP Inspector (`npx @modelcontextprotoc
 npm test
 ```
 
-It starts its own server on port 8799 with a built-in test token and runs 24 tests against the live `/mcp` endpoint:
+It starts its own server on port 8799 with a built-in test token and runs 26 tests against the live `/mcp` endpoint:
 
 - the three protocol versions (2025-11-25, 2025-06-18, 2025-03-26) and the fallback for an unknown one
 - exactly six tools, `structuredContent` plus a speakable text copy on every result, and speakable `isError` messages

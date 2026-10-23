@@ -101,7 +101,8 @@ The whole project.
 ## AI tools used
 - **Claude Code:** wrote the server, tests, board card, docs, deploy scripts, the demo helper and the video tooling.
 - **Grok Voice:** the synthetic voices in the video: the narrator, Maya, Sam and Alexa. Labelled as simulated on screen.
-- **Not used:** Kiro (sign-in failed; see the friction log), Amazon Bedrock, AgentCore, Strands and Nova. The server makes no model calls at runtime.
+- **Kiro CLI:** a read-only review of the code and two regression tests it wrote (Accept negotiation, notification 202 with an empty body). Sign-in only worked late on the last night (see the friction log). Its review findings were checked and none was a defect.
+- **Not used:** Amazon Bedrock, AgentCore, Strands and Nova. The server makes no model calls at runtime.
 
 ## Links
 Live: https://kitchen-table-mcp.wolfejam2020.workers.dev/demo · Video: https://youtu.be/vGV_YJFv-p8 · [Friction log](FRICTION_LOG.md)

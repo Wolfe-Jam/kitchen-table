@@ -9,7 +9,7 @@ Template: [chris-trag/friction-log-guide](https://github.com/chris-trag/friction
 
 ## BLUF (bottom line up front)
 
-A spec-conformant remote MCP server for Alexa+ was quick to build from the quickstart, but the quickstart is silent on the tool-result shape, MCP Apps rendering and speech limits, and it leaves OAuth discovery unclear without `WWW-Authenticate`. AWS account verification and the Kiro sign-in blocked the AWS tools in a one-day build, so the AWS Builder challenge is not claimed.
+A spec-conformant remote MCP server for Alexa+ was quick to build from the quickstart, but the quickstart is silent on the tool-result shape, MCP Apps rendering and speech limits, and it leaves OAuth discovery unclear without `WWW-Authenticate`. AWS account verification and the Kiro sign-in blocked the AWS tools for most of a one-day build. Kiro CLI worked only late on the last night (via the device flow), so our Kiro use is small: a read-only code review and two tests.
 
 **Grade:** B−
 
@@ -26,7 +26,7 @@ A spec-conformant remote MCP server for Alexa+ was quick to build from the quick
 - [x] Build and deploy six tools with `structuredContent` plus speakable text
 - [x] Build an MCP Apps card
 - [ ] Run the demo through the alexa-skill-mcp-bridge (Alexa developer console simulator)
-- [ ] Use Kiro on part of the build
+- [x] Use Kiro on part of the build (late: a read-only review and two tests)
 - [ ] Run the demo on an Echo / Echo Show
 
 ## Pros
@@ -57,6 +57,8 @@ A spec-conformant remote MCP server for Alexa+ was quick to build from the quick
 **Actual:** Every option ends in: `Unified auth portal failed: Authentication failed: The identity provider reported an error: Token exchange failed: {"message":"There was an error signing in. Please contact Support ... Reference: b4e854b8-f001-70bc-b65c-e46b1e85bec8"}`. `kiro-cli whoami` reports "Not logged in". The same account was, at that moment, waiting on AWS identity verification (driving licence and proof of address), so the cause may be that, but the error does not say so. Reproduced from a second client: `kiro-cli login` in a terminal fails with the same message and the **same reference ID**, so the failure follows the sign-in identity, not the app or the machine. `kiro-cli login --use-device-flow` is interactive and prints nothing without a terminal, so a coding agent cannot start the device flow.
 
 **Recommendation:** Name the actual cause in the error (for example "account verification pending"), and make `kiro-cli login --use-device-flow` print the code and URL in non-interactive shells.
+
+**Update, 2026-10-22 ~23:00 local:** the AWS console now let us in (no verification email had arrived). `kiro-cli login` (browser flow) then ended on a page saying "You can close this window now", yet `kiro-cli whoami` still said "Not logged in" and the CLI showed no error. `kiro-cli login --use-device-flow`, run in an interactive terminal, printed a code and URL and succeeded ("Logged in successfully", Builder ID). So the default browser flow can fail silently while the device flow works. Suggestion: show the result in the CLI when the browser flow cannot complete, and mention the device flow as the fallback.
 
 ### AWS account identity verification and sign-in blocked the AWS tools for a one-day build
 
@@ -201,11 +203,12 @@ Kept for completeness; these are not Amazon products.
 
 - ✅ Worker + SQLite-backed Durable Object, six tools, card, `/demo`, `/admin/reset`
 - ✅ Deployed to https://kitchen-table-mcp.wolfejam2020.workers.dev
-- ✅ 24/24 live-endpoint tests pass locally and against the deployed URL (protocol versions, 401 with no `WWW-Authenticate`, confirm guard, idempotent confirm, inbox nudge, tool-side latency under 500 ms)
+- ✅ 26/26 live-endpoint tests pass locally and against the deployed URL (protocol versions, 401 with no `WWW-Authenticate`, confirm guard, idempotent confirm, inbox nudge, tool-side latency under 500 ms)
 
 ## What failed
 
-- ❌ Kiro: installed, but sign-in fails (see Friction), so nothing was built with it
+- ✅ Kiro CLI (late, after the device-flow login): a read-only review of `src/` listed three risks; we checked each against the code and none was a defect. Kiro then wrote two regression tests (Accept negotiation, notification 202 with an empty body), which pass locally and against the live URL. It changed no other file.
+- ❌ Kiro earlier: sign-in failed for most of the build (see Friction), so it shaped none of the design
 - ❌ AWS account: identity verification still pending at the time of writing; Bedrock, AgentCore and the bridge not tried
 - ❌ Not attempted: bridge + AgentCore + Nova (AWS account verification pending), Alexa simulator run, real Echo
 

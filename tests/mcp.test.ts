@@ -79,6 +79,44 @@ describe("protocol", () => {
     expect(res.status).toBe(202);
   });
 
+  it("Accept negotiation: prefers application/json when client accepts both, streams when only SSE accepted", async () => {
+    // Both accepted → server should reply application/json
+    const jsonRes = await fetch(`${BASE}/mcp`, {
+      method: "POST",
+      headers: {
+        authorization: `Bearer ${TOKEN}`,
+        "content-type": "application/json",
+        accept: "text/event-stream, application/json",
+      },
+      body: JSON.stringify({ jsonrpc: "2.0", id: nextId++, method: "tools/list" }),
+    });
+    expect(jsonRes.headers.get("content-type")).toContain("application/json");
+
+    // Only SSE accepted → server should stream text/event-stream with an event line
+    const sseRes = await fetch(`${BASE}/mcp`, {
+      method: "POST",
+      headers: {
+        authorization: `Bearer ${TOKEN}`,
+        "content-type": "application/json",
+        accept: "text/event-stream",
+      },
+      body: JSON.stringify({ jsonrpc: "2.0", id: nextId++, method: "tools/list" }),
+    });
+    expect(sseRes.headers.get("content-type")).toMatch(/^text\/event-stream/);
+    const text = await sseRes.text();
+    expect(text).toContain("event: message");
+  });
+
+  it("notification with no id gets 202 and an empty body", async () => {
+    const res = await fetch(`${BASE}/mcp`, {
+      method: "POST",
+      headers: { authorization: `Bearer ${TOKEN}`, "content-type": "application/json" },
+      body: JSON.stringify({ jsonrpc: "2.0", method: "notifications/initialized" }),
+    });
+    expect(res.status).toBe(202);
+    expect(await res.text()).toBe("");
+  });
+
   it("GET /mcp is 405", async () => {
     expect((await fetch(`${BASE}/mcp`)).status).toBe(405);
   });
