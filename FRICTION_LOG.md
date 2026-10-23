@@ -62,15 +62,19 @@ A spec-conformant remote MCP server for Alexa+ was quick to build from the quick
 
 ### AWS account identity verification and sign-in blocked the AWS tools for a one-day build
 
-**Severity:** ⚠️ High
+**Severity:** 🔥 Critical
 
 **Timestamp:** 2026-10-22, from the evening AWS sign-up (no recording)
 
 **Expected:** Sign up, get a working account, and try Bedrock, the Alexa+ bridge and Kiro the same evening.
 
-**Actual:** Sign-up was followed by an identity verification step (photo ID and proof of address) with a stated wait of under 24 hours, usually 2 to 3 hours. At the time of writing no confirmation email has arrived. The console home opened, but `aws login` from the CLI did not complete: the browser sign-in page asked for an account ID or IAM user and did not accept it (it was unclear whether to choose the root user instead), and a first attempt timed out waiting for browser approval. The AWS CLI also had to be installed by hand (a package manager would have built it from source on this Mac). Net effect: Bedrock, AgentCore, the alexa-skill-mcp-bridge and Kiro could not be tried before the deadline, so the AWS Builder challenge is not claimed.
+**Actual:** Sign-up was followed by an identity verification step (photo ID and proof of address) with a stated wait of under 24 hours, usually 2 to 3 hours. At the time of writing no confirmation email has arrived. The console home opened, but `aws login` from the CLI did not complete: the browser sign-in page asked for an account ID or IAM user and did not accept it (it was unclear whether to choose the root user instead), and a first attempt timed out waiting for browser approval. The AWS CLI also had to be installed by hand (a package manager would have built it from source on this Mac). Net effect: Bedrock, AgentCore and the alexa-skill-mcp-bridge could not be tried before the deadline. Kiro was reached later through a separate Builder ID sign-in (see the Kiro entry above).
 
 **Recommendation:** Show verification status and an estimated time on the console home. Let a new account use a limited Bedrock/AgentCore sandbox while verification runs. On the `aws login` sign-in page, say plainly "root user" versus "IAM user" and what each one needs.
+
+**Update, 2026-10-23 (morning):** `aws login` (root user) now ends on a page that says "Your AWS account is suspended, please contact customer support." No reason is given there. Following the steps in the emails we received led back to the same page. A Basic Support case (account and billing) was opened at 08:52 EDT, a few hours before the deadline, and had only an automatic acknowledgement (severity "low", no reason and no timeline) when this was written. The account is a new personal one with no workloads, so there was nothing to violate. The result: no AWS service could be used at all, including the planned run of the alexa-skill-mcp-bridge.
+
+**Update recommendation:** Say why an account is suspended, on the sign-in page and in an email, and list the exact step that clears it. A new account that is waiting on verification should show "pending verification", not "suspended". Give the support case a visible response-time estimate.
 
 ### The quickstart says `WWW-Authenticate` is "not supported yet", which blocks standard OAuth discovery
 
