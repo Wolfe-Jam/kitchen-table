@@ -106,15 +106,15 @@ A spec-conformant remote MCP server for Alexa+ was quick to build from the quick
 
 **Recommendation:** Allow a development manifest without store-listing assets.
 
-### The bridge does not render MCP Apps cards
+### How an MCP Apps card reaches a screen is not documented in the quickstart
 
 **Severity:** ⚡ Medium
 
-**Timestamp:** 2026-10-22, from the bridge README (not yet tried)
+**Timestamp:** 2026-10-22, from the bridge README (not tried)
 
-**Expected:** `_meta.ui.resourceUri` leads to a card on the device or simulator.
+**Expected:** `_meta.ui.resourceUri` leads to a card on the device or simulator, and the quickstart says how.
 
-**Actual:** The bridge README says visual output is out of scope for v1 (`visual` is always null; `_meta.ui.resourceUri` is preserved for later). The card is therefore shown on `/demo` instead. *To be confirmed once the bridge is run.*
+**Actual:** The quickstart does not say how Alexa+ renders an MCP Apps card. We first read an older bridge README that put visual output out of scope. The current README (re-read the same night) says the bridge renders the server's MCP Apps widget to a still image on devices with a screen, behind `visual.enabled`, added in the bridge's PRs #8 and #9 on 2026-10-18. We could not run the bridge (AWS access never cleared), so we have not verified it, and the card is shown on `/demo` instead.
 
 **Recommendation:** Say in the quickstart whether and when Alexa+ itself renders MCP Apps, and how a developer previews it.
 
@@ -221,5 +221,5 @@ Alexa+ MCP docs ✅ · alexa-skill-mcp-bridge · Bedrock AgentCore / Strands / N
 [00:53 local] npm install → wrangler 4.151 / workers-types 4.x → ERESOLVE peer conflict → 5 min
 [00:57 local] vitest → process.env.BASE_URL === "/" → "Failed to parse URL from //admin/reset" → 3 min
 [00:5x local] WebFetch devpost /rules → 403 → read via Chrome instead → 5 min
-[01:0x local] bridge README → needs AWS creds + Nova 2 Lite access in us-east-1 + Docker/Finch + CDK bootstrap + public URL; no MCP Apps rendering
+[01:0x local] bridge README → needs AWS creds + Nova 2 Lite access in us-east-1 + Docker/Finch + CDK bootstrap + public URL; (an older README said no MCP Apps rendering; the current one renders the widget to an image, not tried)
 ```
