@@ -6,7 +6,7 @@ Three ways to check it, from no setup to a full local run. None needs an account
 
 https://kitchen-table-mcp.wolfejam2020.workers.dev/demo
 
-This is the real card the server returns (an MCP Apps `ui://kitchen-table/board` resource), polling every second: the household's needs, the errand runs, the weekend strip, Priya's phone and the Deed of the week. Two read-only JSON views sit beside it:
+This is the real card the server returns (an MCP Apps `ui://kitchen-table/board` resource), polling every few seconds while the tab is visible (it pauses after about 5 minutes; click to resume): the household's needs, the errand runs, the weekend strip, Priya's phone and the Deed of the week. Two read-only JSON views sit beside it:
 
 - `/demo/state`: the board data and Priya's inbox
 - `/demo/log`: the last tool calls, with `duration_ms` (and `turn_gap_ms` on confirms)

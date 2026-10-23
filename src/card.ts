@@ -1,6 +1,6 @@
 // The Echo Show card: one self-contained HTML file, no external fetches in host mode.
 // Host mode (MCP Apps): rendered from the tool result's structuredContent.board, delivered by postMessage.
-// Standalone mode (/demo): same HTML, polls /demo/state every second (same-origin only).
+// Standalone mode (/demo): same HTML, polls /demo/state every 4 s while visible, pausing after about 5 minutes (same-origin only).
 
 export const CARD_MIME = "text/html;profile=mcp-app";
 
@@ -89,8 +89,22 @@ h1 small{font-weight:400;color:var(--dim);font-size:14px}
   if(window.parent!==window){
     try{window.parent.postMessage({jsonrpc:'2.0',id:1,method:'ui/initialize',params:{appInfo:{name:'kitchen-table-board',version:'0.1.0'},appCapabilities:{},protocolVersion:'2025-11-21'}},'*');}catch(_){}
   }else{
+    // Be gentle with the server: poll every 4 s, only while the tab is visible, and stop after about 5 minutes (click to resume).
+    var INTERVAL=4000,WINDOW=5*60*1000,until=Date.now()+WINDOW,paused=false;
+    var banner=document.createElement('div');
+    banner.style.cssText='position:fixed;left:50%;bottom:14px;transform:translateX(-50%);background:#171c24;border:1px solid #2a3340;color:#8d9aab;font-size:14px;padding:8px 14px;border-radius:999px;cursor:pointer;display:none';
+    banner.textContent='Paused to save requests. Click to resume.';
+    document.body.appendChild(banner);
     var poll=function(){fetch('state').then(function(r){return r.json();}).then(function(d){render(d.board,d.inbox);}).catch(function(){});};
-    poll();setInterval(poll,1000);
+    var tick=function(){
+      if(document.hidden)return;
+      if(Date.now()>until){paused=true;banner.style.display='block';return;}
+      poll();
+    };
+    var resume=function(){paused=false;banner.style.display='none';until=Date.now()+WINDOW;poll();};
+    banner.addEventListener('click',resume);
+    document.addEventListener('visibilitychange',function(){if(!document.hidden&&!paused)poll();});
+    poll();setInterval(tick,INTERVAL);
   }
 })();
 </script></body></html>`;

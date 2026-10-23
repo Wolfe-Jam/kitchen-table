@@ -66,6 +66,7 @@ describe("protocol", () => {
     const read = await rpc("resources/read", { uri: "ui://kitchen-table/board" });
     expect(read.body.result.contents[0].mimeType).toBe("text/html;profile=mcp-app");
     expect(read.body.result.contents[0].text).toContain("Kitchen Table");
+    expect(read.body.result.contents[0].text).toContain("visibilitychange"); // the board polls gently: visible tab only
   });
 
   it("notifications get 202 and no body", async () => {
