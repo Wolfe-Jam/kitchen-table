@@ -87,7 +87,7 @@ h1 small{font-weight:400;color:var(--dim);font-size:14px}
     }
   });
   if(window.parent!==window){
-    try{window.parent.postMessage({jsonrpc:'2.0',id:1,method:'ui/initialize',params:{appInfo:{name:'kitchen-table-board',version:'0.1.0'},appCapabilities:{},protocolVersion:'2025-11-21'}},'*');}catch(_){}
+    try{window.parent.postMessage({jsonrpc:'2.0',id:1,method:'ui/initialize',params:{appInfo:{name:'kitchen-table-board',version:'1.0.0'},appCapabilities:{},protocolVersion:'2025-11-21'}},'*');}catch(_){}
   }else{
     // Be gentle with the server: poll every 4 s, only while the tab is visible, and stop after about 5 minutes (click to resume).
     var INTERVAL=4000,WINDOW=5*60*1000,until=Date.now()+WINDOW,paused=false;

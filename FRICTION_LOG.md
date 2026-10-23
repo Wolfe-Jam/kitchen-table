@@ -4,14 +4,14 @@ Template: [chris-trag/friction-log-guide](https://github.com/chris-trag/friction
 
 | Reviewer | Status |
 | :--- | :--- |
-| **James Wolfe** (with Claude Code) | In progress |
+| **James Wolfe** (with Claude Code) | Complete |
 | **Amazon Alexa+ / Developer Relations** | Under review |
 
 ## BLUF (bottom line up front)
 
-*(Fill Thursday late.)* Building a spec-conformant remote MCP server for Alexa+ is straightforward from the quickstart, but the quickstart says nothing about the tool result shape, MCP Apps rendering, or speech limits, and the track rules page blocks automated reading.
+A spec-conformant remote MCP server for Alexa+ was quick to build from the quickstart, but the quickstart is silent on the tool-result shape, MCP Apps rendering and speech limits, and it leaves OAuth discovery unclear without `WWW-Authenticate`. AWS account verification and the Kiro sign-in blocked the AWS tools in a one-day build, so the AWS Builder challenge is not claimed.
 
-**Grade:** TBD
+**Grade:** B−
 
 ## Persona
 
@@ -182,11 +182,12 @@ Kept for completeness; these are not Amazon products.
 
 | Time | Event |
 | :--- | :--- |
-| 00:00:00 | *(fill after recording)* |
+| 1:20 | The 401 with no `WWW-Authenticate` header, as the quickstart requires (first Alexa+ entry below) |
+| 1:35 | The friction log and the honest limits: OAuth not built, the AWS tools not used |
 
 ## Screen recording
 
-- Full session: *(add link)*
+- Demo video: https://youtu.be/vGV_YJFv-p8. No full-session screen recording was made; the two working-software segments replay real output captured from the live server.
 
 ## Test environment
 

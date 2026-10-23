@@ -4,6 +4,8 @@ One Alexa+ helper for the whole household. It remembers what each person needs, 
 
 Built for the Alexa+ track of the Amazon Developer Hackathon "Build, Ship, Shape". An MCP server on Cloudflare Workers with a Durable Object per household, plus an Echo Show card.
 
+**Watch (2 minutes):** https://youtu.be/vGV_YJFv-p8 · **Live board:** https://kitchen-table-mcp.wolfejam2020.workers.dev/demo · **Judges' testing steps:** [TESTING.md](TESTING.md)
+
 | Before | After Sam says yes |
 | :--- | :--- |
 | ![Before](docs/card.png) | ![After](docs/card-after.png) |
@@ -102,7 +104,7 @@ The whole project.
 - **Not used:** Kiro (sign-in failed; see the friction log), Amazon Bedrock, AgentCore, Strands and Nova. The server makes no model calls at runtime.
 
 ## Links
-Live: https://kitchen-table-mcp.wolfejam2020.workers.dev/demo · Video: *(add)* · [Friction log](FRICTION_LOG.md)
+Live: https://kitchen-table-mcp.wolfejam2020.workers.dev/demo · Video: https://youtu.be/vGV_YJFv-p8 · [Friction log](FRICTION_LOG.md)
 
 ## License
 MIT

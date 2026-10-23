@@ -45,6 +45,7 @@ describe("protocol", () => {
       const { body } = await rpc("initialize", { protocolVersion: version, capabilities: {}, clientInfo: { name: "t", version: "1" } });
       expect(body.result.protocolVersion).toBe(version);
       expect(body.result.serverInfo.name).toBe("kitchen-table");
+      expect(body.result.serverInfo.version).toBe("1.0.0");
     });
   }
 
