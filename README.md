@@ -2,7 +2,7 @@
 
 One Alexa+ helper for the whole household. It remembers what each person needs, across days and across people, follows up on its own, and confirms before acting.
 
-Built for the Alexa+ track of the Amazon Developer Hackathon "Build, Ship, Shape". An MCP server on Cloudflare Workers with a Durable Object per household, plus an Echo Show card.
+Built for the Alexa+ track of the Amazon Developer Hackathon "Build, Ship, Shape". An MCP server on Cloudflare Workers with a Durable Object per household, plus an MCP Apps board card.
 
 **Watch (2 minutes):** https://youtu.be/vGV_YJFv-p8 · **Live board:** https://kitchen-table-mcp.wolfejam2020.workers.dev/demo · **Judges' testing steps:** [TESTING.md](TESTING.md)
 

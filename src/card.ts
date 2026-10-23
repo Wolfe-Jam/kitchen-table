@@ -1,4 +1,4 @@
-// The Echo Show card: one self-contained HTML file, no external fetches in host mode.
+// The board card (MCP Apps): one self-contained HTML file, no external fetches in host mode.
 // Host mode (MCP Apps): rendered from the tool result's structuredContent.board, delivered by postMessage.
 // Standalone mode (/demo): same HTML, polls /demo/state every 4 s while visible, pausing after about 5 minutes (same-origin only).
 

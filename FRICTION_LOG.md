@@ -201,7 +201,7 @@ Kept for completeness; these are not Amazon products.
 
 - ✅ Worker + SQLite-backed Durable Object, six tools, card, `/demo`, `/admin/reset`
 - ✅ Deployed to https://kitchen-table-mcp.wolfejam2020.workers.dev
-- ✅ 22/22 live-endpoint tests pass locally and against the deployed URL (protocol versions, 401 with no `WWW-Authenticate`, confirm guard, idempotent confirm, inbox nudge, tool-side latency under 500 ms)
+- ✅ 24/24 live-endpoint tests pass locally and against the deployed URL (protocol versions, 401 with no `WWW-Authenticate`, confirm guard, idempotent confirm, inbox nudge, tool-side latency under 500 ms)
 
 ## What failed
 

@@ -154,7 +154,7 @@ export const RESOURCES = [
   {
     uri: CARD_URI,
     name: "Kitchen Table board",
-    description: "Echo Show card: needs, errand runs and the weekend strip.",
+    description: "Board card: needs, errand runs and the weekend strip.",
     mimeType: CARD_MIME,
   },
 ];

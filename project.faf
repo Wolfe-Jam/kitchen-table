@@ -3,7 +3,7 @@ project:
   name: kitchen-table-mcp
   goal: "Kitchen Table: one Alexa+ helper for the whole household (MCP server on Cloudflare Workers)"
   main_language: TypeScript
-  type: mcp-server
+  type: mcp
 stack:
   frontend: slotignored
   css_framework: slotignored
