@@ -28,17 +28,17 @@ Limit: `speaker` is simulated in this build, so someone could pass another perso
 
 ## Architecture
 ```
-Echo / Alexa simulator ─▶ Alexa skill (alexa-skill-mcp-bridge) ─▶ Strands agent (AgentCore, Nova 2 Lite)
-                                                                          │ MCP Streamable HTTP  POST /mcp
-                                                                          ▼
-                                                       Cloudflare Worker  src/index.ts
-                                                         ├─ MCP JSON-RPC (src/mcp.ts)
-                                                         ├─ Durable Object "Household" (src/household.ts, SQLite-backed)
-                                                         ├─ domain + six tools (src/domain.ts)
-                                                         ├─ ui://kitchen-table/board card (src/card.ts)
-                                                         └─ /demo, /demo/state, /demo/log, /admin/reset
+Alexa+ (voice simulated in the demo) ─▶ an MCP client
+                                          │ MCP Streamable HTTP  POST /mcp
+                                          ▼
+                       Cloudflare Worker  src/index.ts
+                         ├─ MCP JSON-RPC (src/mcp.ts)
+                         ├─ Durable Object "Household" (src/household.ts, SQLite-backed)
+                         ├─ domain + six tools (src/domain.ts)
+                         ├─ ui://kitchen-table/board card (src/card.ts)
+                         └─ /demo, /demo/state, /demo/log, /admin/reset
 ```
-No LLM calls inside tools. Every call logs `duration_ms`; tool-side latency is far below the 500 ms Alexa+ limit. Bridge latency is measured separately in `FRICTION_LOG.md`.
+No LLM calls inside tools. Every call logs `duration_ms`; tool-side latency is typically about 25 to 30 ms against the 500 ms Alexa+ limit; an occasional call takes a few hundred ms, and all stay under 500 ms. This build has not been run through a real Alexa+ account or device.
 
 ## Tools
 | Tool | What it does | Writes? |
@@ -78,8 +78,8 @@ npx wrangler deploy
 ```
 Deployed at https://kitchen-table-mcp.wolfejam2020.workers.dev. `addon.json` points at it; only the icon and carousel image URLs are still placeholders (assets not made yet).
 
-## Connect the bridge
-Point [KayLerch/alexa-skill-mcp-bridge](https://github.com/KayLerch/alexa-skill-mcp-bridge) at `https://<worker-host>/mcp` with the bearer token. *(Steps filled in once tried; see the friction log.)*
+## Connecting a client
+Any MCP client that speaks Streamable HTTP can use `https://<worker-host>/mcp` with `Authorization: Bearer <token>`. The [alexa-skill-mcp-bridge](https://github.com/KayLerch/alexa-skill-mcp-bridge) is a route to testing through Alexa; we did not run it for this entry (it needs an AWS account with Bedrock access, which was still being verified).
 
 ## Auth
 - **Simple mode (implemented):** a static bearer token from a Worker secret. Demo only.
@@ -97,7 +97,9 @@ Point [KayLerch/alexa-skill-mcp-bridge](https://github.com/KayLerch/alexa-skill-
 The whole project.
 
 ## AI tools used
-Claude Code (coding), Kiro (specs/tests, to be added), Grok Bot (research/spec), Nova 2 Lite (runtime orchestrator via the bridge).
+- **Claude Code:** wrote the server, tests, board card, docs, deploy scripts, the demo helper and the video tooling.
+- **Grok Voice:** the synthetic voices in the video: the narrator, Maya, Sam and Alexa. Labelled as simulated on screen.
+- **Not used:** Kiro (sign-in failed; see the friction log), Amazon Bedrock, AgentCore, Strands and Nova. The server makes no model calls at runtime.
 
 ## Links
 Live: https://kitchen-table-mcp.wolfejam2020.workers.dev/demo · Video: *(add)* · [Friction log](FRICTION_LOG.md)

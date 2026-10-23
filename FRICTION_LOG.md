@@ -44,6 +44,32 @@ Template: [chris-trag/friction-log-guide](https://github.com/chris-trag/friction
 
 ## Friction
 
+### Amazon, AWS and hackathon tooling
+
+### Kiro CLI sign-in fails with "Token exchange failed" on a new AWS account
+
+**Severity:** 🔥 Critical
+
+**Timestamp:** 2026-10-22 ~02:30 local, Kiro CLI 2.33.1 desktop sign-in
+
+**Expected:** Sign in with Google, GitHub or Builder ID and start using the CLI.
+
+**Actual:** Every option ends in: `Unified auth portal failed: Authentication failed: The identity provider reported an error: Token exchange failed: {"message":"There was an error signing in. Please contact Support ... Reference: b4e854b8-f001-70bc-b65c-e46b1e85bec8"}`. `kiro-cli whoami` reports "Not logged in". The same account was, at that moment, waiting on AWS identity verification (driving licence and proof of address), so the cause may be that, but the error does not say so. Reproduced from a second client: `kiro-cli login` in a terminal fails with the same message and the **same reference ID**, so the failure follows the sign-in identity, not the app or the machine. `kiro-cli login --use-device-flow` is interactive and prints nothing without a terminal, so a coding agent cannot start the device flow.
+
+**Recommendation:** Name the actual cause in the error (for example "account verification pending"), and make `kiro-cli login --use-device-flow` print the code and URL in non-interactive shells.
+
+### AWS account identity verification and sign-in blocked the AWS tools for a one-day build
+
+**Severity:** ⚠️ High
+
+**Timestamp:** 2026-10-22, from the evening AWS sign-up (no recording)
+
+**Expected:** Sign up, get a working account, and try Bedrock, the Alexa+ bridge and Kiro the same evening.
+
+**Actual:** Sign-up was followed by an identity verification step (photo ID and proof of address) with a stated wait of under 24 hours, usually 2 to 3 hours. At the time of writing no confirmation email has arrived. The console home opened, but `aws login` from the CLI did not complete: the browser sign-in page asked for an account ID or IAM user and did not accept it (it was unclear whether to choose the root user instead), and a first attempt timed out waiting for browser approval. The AWS CLI also had to be installed by hand (a package manager would have built it from source on this Mac). Net effect: Bedrock, AgentCore, the alexa-skill-mcp-bridge and Kiro could not be tried before the deadline, so the AWS Builder challenge is not claimed.
+
+**Recommendation:** Show verification status and an estimated time on the console home. Let a new account use a limited Bedrock/AgentCore sandbox while verification runs. On the `aws login` sign-in page, say plainly "root user" versus "IAM user" and what each one needs.
+
 ### The quickstart says `WWW-Authenticate` is "not supported yet", which blocks standard OAuth discovery
 
 **Severity:** ⚠️ High
@@ -92,6 +118,10 @@ Template: [chris-trag/friction-log-guide](https://github.com/chris-trag/friction
 
 **Recommendation:** Say in the quickstart whether and when Alexa+ itself renders MCP Apps, and how a developer previews it.
 
+### Other tools we used (not Amazon)
+
+Kept for completeness; these are not Amazon products.
+
 ### wrangler 4.151 peer-depends on `@cloudflare/workers-types` 5.x
 
 **Severity:** ⚡ Medium
@@ -116,17 +146,21 @@ Template: [chris-trag/friction-log-guide](https://github.com/chris-trag/friction
 
 **Recommendation:** None for Amazon; recorded for completeness.
 
-### Kiro CLI sign-in fails with "Token exchange failed" on a new AWS account
+### Narration: a human voice was inconsistent, Grok Voice made it consistent
 
-**Severity:** 🔥 Critical
+**Severity:** ⚡ Medium
 
-**Timestamp:** 2026-10-22 ~02:30 local, Kiro CLI 2.33.1 desktop sign-in
+**Timestamp:** 2026-10-22, evening (the demo video's soundtrack)
 
-**Expected:** Sign in with Google, GitHub or Builder ID and start using the CLI.
+**Expected:** Record a short narration and a few character lines, and have them sound like one coherent film.
 
-**Actual:** Every option ends in: `Unified auth portal failed: Authentication failed: The identity provider reported an error: Token exchange failed: {"message":"There was an error signing in. Please contact Support ... Reference: b4e854b8-f001-70bc-b65c-e46b1e85bec8"}`. `kiro-cli whoami` reports "Not logged in". The same account was, at that moment, waiting on AWS identity verification (driving licence and proof of address), so the cause may be that, but the error does not say so. Reproduced from a second client: `kiro-cli login` in a terminal fails with the same message and the **same reference ID**, so the failure follows the sign-in identity, not the app or the machine. `kiro-cli login --use-device-flow` is interactive and prints nothing without a terminal, so a coding agent cannot start the device flow.
+**Actual:** Recorded line by line on an iMac's built-in mic, the narration varied from line to line (tone, level, room sound), and caption-sized fragments sounded choppy rather than like one story. The recordings were quiet, so an automatic silence-trimmer cut the soft final "s" of "needs", and the Stop-button click survived trimming. The character voices (Sam in particular) were generated in separate sessions and drifted between takes. It took several rounds of retakes, re-trimming and re-rendering.
 
-**Recommendation:** Name the actual cause in the error (for example "account verification pending"), and make `kiro-cli login --use-device-flow` print the code and URL in non-interactive shells.
+**Fix:** One flowing script, then every voice generated in a single batch with Grok Voice: one fixed voice and speed per speaker (Eve for Maya, Atlas for Sam, Ara for Alexa, Rex for the narrator), delivered as consistent 44.1 kHz mono files at about -16 LUFS with clean sentence pauses. That removed the variation, and the batch's even pauses let captions be timed to each sentence.
+
+**Notes:** Sam's speed had to be 0.70, which Grok says is as slow as its API goes, to fit a 1.6 to 2.0 second line. We label the voices as simulated on screen. This entry is about our own tooling, not an Amazon product.
+
+**Recommendation:** For a demo with several voices, generate them all in one batch with fixed voice settings from the start, instead of recording or generating line by line.
 
 ## Questions
 
@@ -142,6 +176,7 @@ Template: [chris-trag/friction-log-guide](https://github.com/chris-trag/friction
 3. Make the rules page readable by automated tools.
 4. Allow a development `addon.json` without store assets.
 5. State whether Alexa+ renders MCP Apps and how to preview them.
+6. Show AWS account verification status and an ETA, and offer a limited Bedrock/AgentCore sandbox while it runs (see the AWS entry).
 
 ## Video timestamps
 
@@ -170,13 +205,14 @@ Template: [chris-trag/friction-log-guide](https://github.com/chris-trag/friction
 ## What failed
 
 - ❌ Kiro: installed, but sign-in fails (see Friction), so nothing was built with it
+- ❌ AWS account: identity verification still pending at the time of writing; Bedrock, AgentCore and the bridge not tried
 - ❌ Not attempted: bridge + AgentCore + Nova (AWS account verification pending), Alexa simulator run, real Echo
 
 ## Appendix
 
 ### Products covered (one section each as they are used)
 
-Alexa+ MCP docs ✅ · alexa-skill-mcp-bridge · Bedrock AgentCore / Strands / Nova 2 Lite · Kiro · Alexa console / simulator · Cloudflare Workers + Durable Objects · MCP Inspector
+Alexa+ MCP docs ✅ · alexa-skill-mcp-bridge · Bedrock AgentCore / Strands / Nova 2 Lite · Kiro · Alexa console / simulator · Cloudflare Workers + Durable Objects · MCP Inspector · Grok Voice (video voices)
 
 ### Scratch pad
 
