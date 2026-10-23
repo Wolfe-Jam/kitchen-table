@@ -208,6 +208,7 @@ Kept for completeness; these are not Amazon products.
 ## What failed
 
 - ✅ Kiro CLI (late, after the device-flow login): a read-only review of `src/` listed three risks; we checked each against the code and none was a defect. Kiro then wrote two regression tests (Accept negotiation, notification 202 with an empty body), which pass locally and against the live URL. It changed no other file.
+- ✅ Kiro Crew (late): a stranger test of the repo. From a fresh clone it followed `TESTING.md` (install, run, `npm test`) and reported 26/26 passing in about 75 seconds. It also suggested one test for the confirm guard, which duplicated an existing test, so we discarded it. Friction: its single-message chat cannot approve tool calls (it needs an interactive terminal), and the approval prompt denies by default and takes only the letter `a`. The public edition has no isolation jail, so we ran it on a copy and approved each command; told to work only inside one folder, it still wrote a log to `/tmp` and ran a kill command.
 - ❌ Kiro earlier: sign-in failed for most of the build (see Friction), so it shaped none of the design
 - ❌ AWS account: identity verification still pending at the time of writing; Bedrock, AgentCore and the bridge not tried
 - ❌ Not attempted: bridge + AgentCore + Nova (AWS account verification pending), Alexa simulator run, real Echo

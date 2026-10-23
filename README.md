@@ -102,6 +102,7 @@ The whole project.
 - **Claude Code:** wrote the server, tests, board card, docs, deploy scripts, the demo helper and the video tooling.
 - **Grok Voice:** the synthetic voices in the video: the narrator, Maya, Sam and Alexa. Labelled as simulated on screen.
 - **Kiro CLI:** a read-only review of the code and two regression tests it wrote (Accept negotiation, notification 202 with an empty body). Sign-in only worked late on the last night (see the friction log). Its review findings were checked and none was a defect.
+- **Kiro Crew:** installed and used for a stranger test of this repo (a fresh clone, then `TESTING.md` followed step by step: 26 of 26 tests passed) and for one suggested test, which we discarded as a duplicate of an existing test.
 - **Not used:** Amazon Bedrock, AgentCore, Strands and Nova. The server makes no model calls at runtime.
 
 ## Links
