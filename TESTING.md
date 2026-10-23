@@ -15,7 +15,7 @@ This is the real card the server returns (an MCP Apps `ui://kitchen-table/board`
 
 ## 2. Run it and play the story (5 minutes)
 
-Needs Node 20 or newer and Python 3 (built and tested on Node 24).
+Needs Node 22.12 or newer (the test runner requires it) and Python 3 (built and tested on Node 24).
 
 ```bash
 git clone https://github.com/Wolfe-Jam/kitchen-table && cd kitchen-table
